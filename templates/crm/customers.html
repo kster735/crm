@@ -1,0 +1,20 @@
+{% extends "crm/index.html" %}
+
+
+{% block title %} 
+    Οι πελάτες μου - {{user_id}}
+{% endblock %}
+
+ 
+
+{% block content %}
+{% if customers_list %}
+<ul>
+    {% for c in customers_list %}
+        <li> {{c}} </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>Ο χρήστης {{user_id}} δεν έχει πελάτες.</p>
+{% endif %}
+{% endblock %}

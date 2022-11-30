@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> {% block title %} CRM {% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'crm/css/main.css' %}">
+</head>
+<body>
+
+    {% block header %}
+    <header> 
+        <div>
+            <h1> CRM </h1> 
+            <h3>Πρόγραμμα Διαχείρισης Πελατολογίου</h3> 
+        </div> 
+    </header>
+    {% endblock %}
+
+    {% block  content %}
+    {% if user_list %}
+        <ol>
+            {% for user in user_list %}
+            <li> <a href="{{user.id}}/customers/"> {{user.user_firstname}} {{user.user_lastname}} </a> </li>
+            {% endfor %}
+        </ol>
+    {% else %}
+        <p>No users yet</p>
+    {% endif %}
+    {% endblock  %}
+
+    {% block footer %}
+    <footer>
+        &copy; 2022 Στέργιος Κατσογιάννης
+    </footer> 
+    {% endblock %}
+    
+</body>
+</html>
