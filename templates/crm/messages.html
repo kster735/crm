@@ -1,0 +1,20 @@
+{% extends 'crm/index.html' %}
+
+{% block title %} 
+    My Messages - {{user_id}}
+{% endblock %}
+
+{% block header %}
+    <div class="row pt-3">
+        <div class="col-6 col-md-8">
+            <h1>My Messages</h1> 
+        </div>
+        <div class="col-6 col-md-4 fs-3 text-truncate">
+            <a href="messages_insert_form/" class="btn btn-lg btn-outline-primary text-truncate b-3"> Add Message </a>
+        </div>
+    </div>
+{% endblock header %}
+
+{% block content %}
+    <p>My messages</p>
+{% endblock content %}

@@ -1,39 +1,76 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title> {% block title %} CRM {% endblock %}</title>
     {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'crm/css/main.css' %}">
 </head>
-<body>
+<body>    
 
-    {% block header %}
-    <header> 
-        <div>
-            <h1> CRM </h1> 
-            <h3>Πρόγραμμα Διαχείρισης Πελατολογίου</h3> 
-        </div> 
-    </header>
-    {% endblock %}
 
-    {% block  content %}
-    {% if user_list %}
-        <ol>
-            {% for user in user_list %}
-            <li> <a href="{{user.id}}/customers/"> {{user.user_firstname}} {{user.user_lastname}} </a> </li>
-            {% endfor %}
-        </ol>
-    {% else %}
-        <p>No users yet</p>
-    {% endif %}
-    {% endblock  %}
+
+<div class="container-fluid bg-white g-0">
+    <div class="row g-0">
+    {% block sidebar %}
+        <div class="col-1 col-md-3 min-vh-100 sidebar">
+            <nav class="nav flex-column text-truncate">
+                <a class="nav-link link-light text-truncate fs-1 text-start mb-5" href="/crm">
+                    <span> MiniCRM </span>
+                    {% comment %} <img src="{% static 'crm/assets/images/home.svg' %}" alt="contacts"
+                        width="64"
+                        height="64"> {% endcomment %}
+                </a>
+                
+
+                <a class="btn btn-outline-dark text-truncate text-start fs-2 active" href="/crm">
+                    <img src="{% static 'crm/assets/images/dashboard.svg' %}" alt="dashboard">
+                    <span>Dashboard</span>
+                </a>
+                <a class="btn btn-outline-dark text-light text-truncate text-start fs-2" aria-current="page" href="/crm/users/1">
+                    <img src="{% static 'crm/assets/images/users.svg' %}" alt="users">
+                    <span>Users</span>
+                </a>
+                <a class="btn btn-outline-dark text-light text-truncate text-start fs-2" href="/crm/users/1/contacts">
+                    <img src="{% static 'crm/assets/images/contacts.svg' %}" alt="contacts">
+                    <span>Contacts</span>
+                </a>
+                <a class="btn btn-outline-dark text-light text-truncate text-start fs-2" href="/crm/users/1/messages">
+                    <img src="{% static 'crm/assets/images/messages.svg' %}" alt="messages">
+                    <span>Messages</span>
+                </a>
+            </nav>
+        </div>
+
+        
+    {% endblock sidebar %}
+        
+        <div class="col-11 col-md-9">
+            <header class="bg-light mb-5 w-100 px-3 text-dark shadow">
+            {% block header %}
+                <h1>Welcome to miniCRM</h1> 
+            {% endblock header %}
+            </header>
+
+            <section class="px-3">
+                {% block  content %}
+                <p>My content</p>
+                {% endblock %}
+            </section>
+
+        </div>
+    </div>
+</div>
+
 
     {% block footer %}
-    <footer>
-        &copy; 2022 Στέργιος Κατσογιάννης
+    <footer class="container-fluid bg-light text-dark fs-3">
+        <div>&copy; 2022 Στέργιος Κατσογιάννης</div>
     </footer> 
-    {% endblock %}
-    
+    {% endblock footer %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
 </body>
 </html>
