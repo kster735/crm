@@ -1,27 +1,72 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import User, Contact, Message
 from django.db import connection
 
 def index(request):
-    user_list = User.objects.all()
-    template ='crm/index.html'
-    context = {
-        'user_list': user_list,
-    }
-    return render(request, template, context)
+    if 'user_id' in request.session:
+        user_id = request.session['user_id']
+        context = {'user_id': user_id}
+        template = 'crm/index.html'
+        return render(request, template, context)
+    else:
+        return redirect('login')
+        
+def landing(request):
+    # if not 'user_id' in request.session:
+    return render(request, 'crm/landing.html')
 
-def contacts(request, user_id):
-    contacts_list = Contact.objects.filter(user = user_id)
+
+def login(request):
+    if request.method == 'POST':
+        username = request.POST['userUserName']
+        password = request.POST['userPassword']
+        cursor = connection.cursor()
+        sql  = "SELECT * "
+        sql += "FROM crm_user WHERE "
+        sql += "user_username=%s and user_password=%s"
+        cursor.execute(sql, [username, password])
+        user = dictfetchall(cursor)
+        if user:
+            request.session['user_id'] = user[0]['id']
+            return redirect('index')
+        else:
+            return render(request, 'crm/login.html', {'errormsg': 'Please enter valid Username or Password.', 'username': username})
+    return render(request, 'crm/login.html')
+
+def logout(request):
+    try:
+        del request.session['user_id']
+    except:
+        return redirect('login')
+    return redirect('login')
+
+
+def contacts(request, user_id, viewuserid = None):
+    if not isloggedin(request):
+        return redirect('login')
+    
+    if viewuserid == None:
+        contacts_list = Contact.objects.filter(user = user_id)
+    else:
+        contacts_list = Contact.objects.filter(user = viewuserid)
+        user_id = viewuserid
     return render(request, 'crm/contacts.html', {'contacts_list': contacts_list, 'user_id': user_id})
 
-def contacts_insert_form(request, user_id):
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM crm_user WHERE id=%s", str(user_id))
-    user = dictfetchall(cursor)
-    cursor.close()
-    return render(request, 'crm/contacts_insert_form.html', {'user': user[0]})
+def contacts_insert_form(request, user_id, viewuserid):
+    if not isloggedin(request):
+        return redirect('login')
+    
+    if user_id == viewuserid:
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM crm_user WHERE id=%s", str(user_id))
+        user = dictfetchall(cursor)
+        cursor.close()
+        return render(request, 'crm/contacts_insert_form.html', {'user': user[0], 'user_id': user_id})
+    return redirect('index')
 
-def contact_store(request, user_id):
+def contact_store(request, user_id, viewuserid):
+    if not isloggedin(request):
+        return redirect('login')
     cfname = request.POST['contactFirstName']
     clname = request.POST['contactLastName']
     cemail = request.POST['contactEmail']
@@ -34,9 +79,19 @@ def contact_store(request, user_id):
     sql += " VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     cursor = connection.cursor()
     cursor.execute(sql, [str(user_id), cfname, clname, cemail, cphone, cmobile, caddress, ccompany, cvatno])
-    return render(request, 'crm/users.html')
+    cursor.close()
+
+    sql = "SELECT * FROM crm_contact WHERE user_id=%s"
+    cursor = connection.cursor()
+    cursor.execute(sql, [str(user_id)])
+    contacts_list = Contact.objects.filter(user = user_id)
+    print(contacts_list)
+    cursor.close()
+    return render(request, 'crm/contacts.html', {'contacts_list': contacts_list, 'user_id': user_id})
 
 def users(request, user_id):
+    if not isloggedin(request):
+        return redirect('login')
     user_list = User.objects.all()
     template ='crm/users.html'
     context = {
@@ -46,6 +101,9 @@ def users(request, user_id):
     return render(request, template, context)
 
 def users_insert_form(request, user_id):
+    if not isloggedin(request):
+        return redirect('login')
+
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM crm_user WHERE id=%s", str(user_id))
     user = dictfetchall(cursor)
@@ -54,6 +112,9 @@ def users_insert_form(request, user_id):
 
 
 def messages(request, user_id):
+    if not isloggedin(request):
+        return redirect('login')
+
     return render(request, 'crm/messages.html', {'user_id': user_id})
 
 def dictfetchall(cursor):
@@ -66,7 +127,19 @@ def dictfetchall(cursor):
 
 
 def test(request):
-    testcontext = "ok"
+    
+    sessionduration = request.session.get_expiry_age() 
+    cookieage = request.session.get_session_cookie_age()
+    # user_id = request.session['user_id']
+    cookiecontext = {'cookieage': cookieage, 'sessionduration': sessionduration}
+    message = {'message': 'ok'}
     if request.method == "POST":
-        testcontext = request.POST['message']
-    return render(request, 'crm/test.html', {'testcontext': testcontext})
+        message = {'message': request.POST['message']}
+    context = message | cookiecontext
+    return render(request, 'crm/test.html', context)
+
+def isloggedin(req) -> bool:
+    if 'user_id' in req.session:
+        # if user_id == req.session['user_id']:
+        return True
+    return False

@@ -36,6 +36,10 @@ footer{
     background-color:#4F506B;
 }
 
+nav a.nav-link img {
+  visibility: hidden;
+}
+
 input[type="text"], input[type="email"]  {
   background-color: #dfe4dc;
 }
@@ -56,7 +60,11 @@ input[type="password"] {
       visibility: hidden;
       background-color: white;
   }
-  
+ 
+  nav a.nav-link img {
+    visibility: visible;
+  }
+
   footer{
       position: relative;
       float: left;
@@ -75,7 +83,11 @@ input[type="password"] {
     background-color: white;
     visibility: hidden;
   }
-  
+ 
+  nav a.nav-link img {
+    visibility: visible;
+  }
+
   footer{
       position: relative;
       float: left;

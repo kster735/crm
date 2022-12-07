@@ -76,13 +76,21 @@
             <label for="userAddress" class="px-4">Address</label>
         </div>
 
-        <div class="form-floating mb-3">
-            <input type="text" class="form-control" name="userVatNo" id="userVatNo" placeholder="VatNo">
-            <label for="userVatNo" class="px-4">VatNo</label>
+        <div class"mb-5">
+            <label for="userType" class="px-0">User Type:</label>
+            <input type="number" class="" name="userType" id="userType" placeholder="1" min="1" max="2">
         </div>
+
+        <div class="mb-5">
+            <label for="userIsActive" class="px-0">Is Active: </label>
+            <input type="checkbox"  name="userIsActive" id="userIsActive" >
+        </div>
+
 
         <div class="my-3">
             <button type="submit" class="btn btn-lg btn-primary mb-3 px-5">Add</button>
+            <button type="reset" class="btn btn-lg btn-warning mb-3 px-5 mx-5">Reset</button>
+
         </div>
     </form>
 </div>

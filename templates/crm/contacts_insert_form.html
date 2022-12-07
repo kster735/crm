@@ -7,16 +7,16 @@
 {% block header %}
     <div class="row pt-3">
         <div class="col-10">
-            <h1>My Contacts</h1> 
+            <h1 class="display-1">My Contacts</h1> 
         </div>
     </div>
 {% endblock header %}
 
 {% block content %}
-<h2 >Add Contact - {{user.user_firstname}} {{user.user_lastname}} </h2>
+<h2 >Add Contact to user: {{user.user_firstname}} {{user.user_lastname}} </h2>
 <hr class="mb-5">
-<div class="container container-sm">
-    <form class="row py-5 px-2 rounded-5" action="contact_store/" method="post">
+<div class="container container-sm w-75">
+    <form class="row py-5 px-2 rounded-5 " action="contact_store/" method="post">
         {% csrf_token %}
         <div class="form-floating mb-3 col-6">
             <input type="text" class="form-control" name="contactFirstName" id="contactFirstName" placeholder="First Name">

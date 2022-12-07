@@ -18,28 +18,31 @@
         <div class="col-1 col-md-3 min-vh-100 sidebar">
             <nav class="nav flex-column text-truncate">
                 <a class="nav-link link-light text-truncate fs-1 text-start mb-5" href="/crm">
-                    <span> MiniCRM </span>
+                    <span> MiniCRM </span><br>
                     {% comment %} <img src="{% static 'crm/assets/images/home.svg' %}" alt="contacts"
                         width="64"
                         height="64"> {% endcomment %}
                 </a>
                 
-
-                <a class="btn btn-outline-dark text-truncate text-start fs-2 active" href="/crm">
+                <a class="btn btn-outline-dark text-light text-truncate text-start fs-2 border-0 rounded-0" id="dashboard" href="/crm">
                     <img src="{% static 'crm/assets/images/dashboard.svg' %}" alt="dashboard">
                     <span>Dashboard</span>
                 </a>
-                <a class="btn btn-outline-dark text-light text-truncate text-start fs-2" aria-current="page" href="/crm/users/1">
+                <a class="btn btn-outline-dark text-light text-truncate text-start fs-2 border-0 rounded-0" id="users" aria-current="page" href="/crm/users/{{user_id}}">
                     <img src="{% static 'crm/assets/images/users.svg' %}" alt="users">
                     <span>Users</span>
                 </a>
-                <a class="btn btn-outline-dark text-light text-truncate text-start fs-2" href="/crm/users/1/contacts">
+                <a class="btn btn-outline-dark text-light text-truncate text-start fs-2 border-0 rounded-0" id="contacts" href="/crm/users/{{user_id}}/contacts/">
                     <img src="{% static 'crm/assets/images/contacts.svg' %}" alt="contacts">
                     <span>Contacts</span>
                 </a>
-                <a class="btn btn-outline-dark text-light text-truncate text-start fs-2" href="/crm/users/1/messages">
+                <a class="btn btn-outline-dark text-light text-truncate text-start fs-2 border-0 rounded-0" id="messages" href="/crm/users/{{user_id}}/messages">
                     <img src="{% static 'crm/assets/images/messages.svg' %}" alt="messages">
                     <span>Messages</span>
+                </a>
+                <a class="btn btn-outline-dark text-light text-truncate text-start fs-2 border-0 rounded-0" href="/crm/logout/{{user_id}}">
+                    <img src="{% static 'crm/assets/images/logout.svg' %}" alt="logout">
+                    <span>Logout</span>
                 </a>
             </nav>
         </div>
@@ -48,16 +51,19 @@
     {% endblock sidebar %}
         
         <div class="col-11 col-md-9">
+            
             <header class="bg-light mb-5 w-100 px-3 text-dark shadow">
             {% block header %}
-                <h1>Welcome to miniCRM</h1> 
+                <div class="row pt-3"> 
+                    <h1 class="display-1">Welcome to miniCRM</h1> 
+                </div>
             {% endblock header %}
             </header>
 
             <section class="px-3">
                 {% block  content %}
-                <p>My content</p>
-                {% endblock %}
+                    <p>{{user_id}}</p>
+                {% endblock content %}
             </section>
 
         </div>
@@ -70,7 +76,8 @@
         <div>&copy; 2022 Στέργιος Κατσογιάννης</div>
     </footer> 
     {% endblock footer %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="{% static 'crm/scripts/links.js'%}"></script>
 </body>
 </html>
