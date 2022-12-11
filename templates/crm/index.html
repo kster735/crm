@@ -3,10 +3,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title> {% block title %} CRM {% endblock %}</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> {% block title %} miniCRM {% endblock %}</title>
     {% load static %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'crm/css/main.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'crm/assets/images/favicon.ico' %}"> 
 </head>
 <body>    
 
@@ -15,15 +18,12 @@
 <div class="container-fluid bg-white g-0">
     <div class="row g-0">
     {% block sidebar %}
-        <div class="col-1 col-md-3 min-vh-100 sidebar">
-            <nav class="nav flex-column text-truncate">
-                <a class="nav-link link-light text-truncate fs-1 text-start mb-5" href="/crm">
-                    <span> MiniCRM </span><br>
-                    {% comment %} <img src="{% static 'crm/assets/images/home.svg' %}" alt="contacts"
-                        width="64"
-                        height="64"> {% endcomment %}
-                </a>
-                
+        <div class="col-2 col-md-2 min-vh-100 sidebar ">
+              <nav class="nav d-flex flex-column justify-content-center text-truncate">
+                  <a class="nav-link link-light text-truncate fs-1 text-start mb-5" href="/crm">
+                      <img src="{% static 'crm/assets/images/logo.svg' %}" alt="contacts"> 
+                      <span class="align-bottom"> miniCRM </span>
+                    </a>
                 <a class="btn btn-outline-dark text-light text-truncate text-start fs-2 border-0 rounded-0" id="dashboard" href="/crm">
                     <img src="{% static 'crm/assets/images/dashboard.svg' %}" alt="dashboard">
                     <span>Dashboard</span>
@@ -46,24 +46,38 @@
                 </a>
             </nav>
         </div>
-
         
+
     {% endblock sidebar %}
         
-        <div class="col-11 col-md-9">
+        <div class="col col-md-10">
             
             <header class="bg-light mb-5 w-100 px-3 text-dark shadow">
             {% block header %}
                 <div class="row pt-3"> 
-                    <h1 class="display-1">Welcome to miniCRM</h1> 
+                    <h1 class="">Welcome to miniCRM</h1>  <p>Hello {{user_username}}</p>
                 </div>
             {% endblock header %}
             </header>
 
             <section class="px-3">
+
+                {% if errormessage %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Holy guacamole!</strong> {{errormessage}}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
+
+
                 {% block  content %}
-                    <p>{{user_id}}</p>
+                    <p>
+                        <a href="https://www.mockaroo.com/" target="_blank"> Mockaroo </a>
+                    </p>
+
+                    {% include 'crm/dashboard.html' %}
                 {% endblock content %}
+                
             </section>
 
         </div>
@@ -73,11 +87,27 @@
 
     {% block footer %}
     <footer class="container-fluid bg-light text-dark fs-3">
-        <div>&copy; 2022 Στέργιος Κατσογιάννης</div>
+        <div>&copy; 2022 </div>
     </footer> 
     {% endblock footer %}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    <script src="{% static 'crm/scripts/links.js'%}"></script>
+    <script src="{% static 'crm/scripts/links.js' %}"></script>
+    <script>
+        if ( window.history.replaceState ) {
+            window.history.replaceState( null, null, window.location.href );
+        }
+    </script>
+    <script>
+        var messages_circle = document.querySelectorAll('.messages svg circle')
+        var messages_percent = document.querySelector('.box .percent .messages .number h2').innerHTML
+        messages_percent_number = messages_percent.split('<')[0]
+        messages_circle[1].style.setProperty("--percentage-messages", messages_percent_number)
+        console.log(messages_percent_number)
+        var users_circle = document.querySelectorAll('.users svg circle')
+        var users_percent = document.querySelector('.box .percent .users .number h2').innerHTML
+        users_percent_number = users_percent.split('<')[0]
+        users_circle[1].style.setProperty("--percentage-users", users_percent_number)
+    </script>
 </body>
 </html>

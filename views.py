@@ -5,15 +5,19 @@ from django.db import connection
 def index(request):
     if 'user_id' in request.session:
         user_id = request.session['user_id']
-        context = {'user_id': user_id}
+        user_username = request.session['user_username']
+        print(user_username)
+        context = {'user_id': user_id, 'user_username': user_username}
         template = 'crm/index.html'
         return render(request, template, context)
     else:
         return redirect('login')
         
 def landing(request):
-    # if not 'user_id' in request.session:
-    return render(request, 'crm/landing.html')
+    if not 'user_id' in request.session:
+        return render(request, 'crm/landing.html')
+    else:
+        return redirect('index')
 
 
 def login(request):
@@ -28,6 +32,8 @@ def login(request):
         user = dictfetchall(cursor)
         if user:
             request.session['user_id'] = user[0]['id']
+            request.session['user_username'] = user[0]['user_username']
+            request.session.set_expiry(1200)
             return redirect('index')
         else:
             return render(request, 'crm/login.html', {'errormsg': 'Please enter valid Username or Password.', 'username': username})
@@ -41,7 +47,7 @@ def logout(request):
     return redirect('login')
 
 
-def contacts(request, user_id, viewuserid = None):
+def contacts(request, user_id, viewuserid = None, error = None):
     if not isloggedin(request):
         return redirect('login')
     
@@ -50,9 +56,9 @@ def contacts(request, user_id, viewuserid = None):
     else:
         contacts_list = Contact.objects.filter(user = viewuserid)
         user_id = viewuserid
-    return render(request, 'crm/contacts.html', {'contacts_list': contacts_list, 'user_id': user_id})
+    return render(request, 'crm/contacts.html', {'contacts_list': contacts_list, 'user_id': user_id, 'errormessage': error})
 
-def contacts_insert_form(request, user_id, viewuserid):
+def contacts_insert_form(request, user_id, viewuserid, error=None):
     if not isloggedin(request):
         return redirect('login')
     
@@ -61,7 +67,7 @@ def contacts_insert_form(request, user_id, viewuserid):
         cursor.execute("SELECT * FROM crm_user WHERE id=%s", str(user_id))
         user = dictfetchall(cursor)
         cursor.close()
-        return render(request, 'crm/contacts_insert_form.html', {'user': user[0], 'user_id': user_id})
+        return render(request, 'crm/contacts_insert_form.html', {'user': user[0], 'user_id': user_id, 'errormessage': error})
     return redirect('index')
 
 def contact_store(request, user_id, viewuserid):
@@ -77,17 +83,19 @@ def contact_store(request, user_id, viewuserid):
     cvatno = request.POST['contactVatNo']
     sql = "INSERT INTO crm_contact (`user_id`,`contact_firstname`,`contact_lastname`,`contact_email`,`contact_phone`,`contact_mobile`,`contact_address`, `contact_company`,`contact_vat_no`)"
     sql += " VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    cursor = connection.cursor()
-    cursor.execute(sql, [str(user_id), cfname, clname, cemail, cphone, cmobile, caddress, ccompany, cvatno])
-    cursor.close()
-
-    sql = "SELECT * FROM crm_contact WHERE user_id=%s"
-    cursor = connection.cursor()
-    cursor.execute(sql, [str(user_id)])
-    contacts_list = Contact.objects.filter(user = user_id)
-    print(contacts_list)
-    cursor.close()
-    return render(request, 'crm/contacts.html', {'contacts_list': contacts_list, 'user_id': user_id})
+    try:
+        cursor = connection.cursor()
+        cursor.execute(sql, [str(user_id), cfname, clname, cemail, cphone, cmobile, caddress, ccompany, cvatno])
+        cursor.close()
+        sql = "SELECT * FROM crm_contact WHERE user_id=%s"
+        cursor = connection.cursor()
+        cursor.execute(sql, [str(user_id)])
+        contacts_list = Contact.objects.filter(user = user_id)
+        cursor.close()
+        return render(request, 'crm/contacts.html', {'contacts_list': contacts_list, 'user_id': user_id})
+    except:
+        error = 'An error has occured'
+        return redirect('contacts_insert_form', user_id = user_id, viewuserid = user_id, error=error)
 
 def users(request, user_id):
     if not isloggedin(request):
@@ -110,6 +118,8 @@ def users_insert_form(request, user_id):
     cursor.close()
     return render(request, 'crm/users_insert_form.html', {'user': user[0]})
 
+def user_store(request):
+    pass
 
 def messages(request, user_id):
     if not isloggedin(request):
@@ -140,6 +150,5 @@ def test(request):
 
 def isloggedin(req) -> bool:
     if 'user_id' in req.session:
-        # if user_id == req.session['user_id']:
         return True
     return False

@@ -17,7 +17,7 @@
 <hr class="mb-5">
 <div class="container container-sm">
     <form class="row py-5 px-2 rounded-5" method="post">
-
+        {% csrf_token %}
         <h3>Personal Info</h3>
         <div class="form-floating mb-3 col-6">
             <input type="text" class="form-control" name="userFirstName" id="userFirstName" placeholder="First Name">
@@ -33,7 +33,6 @@
             <input type="email" class="form-control" name="userEmail" id="userEmail" placeholder="email@example.com">
             <label for="userEmail" class="px-4">Email</label>
         </div>
-
 
         <h3>Authentication info</h3>
 
@@ -85,7 +84,6 @@
             <label for="userIsActive" class="px-0">Is Active: </label>
             <input type="checkbox"  name="userIsActive" id="userIsActive" >
         </div>
-
 
         <div class="my-3">
             <button type="submit" class="btn btn-lg btn-primary mb-3 px-5">Add</button>

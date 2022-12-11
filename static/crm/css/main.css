@@ -29,16 +29,100 @@ body{
 
 footer{
   position: fixed;
-  bottom: 0;
+  bottom: -50px;
 }
+
+/* Circle Bars CSS */
+
+:root {
+  --percentage-messages: 0;
+  --percentage-users:0;
+}
+
+.box {
+  position: relative;
+  width: 200px;
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: white;
+}
+
+.box .percent {
+  position: relative;
+  width: 150px;
+  height: 150px;
+}
+
+.box .percent svg {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  transform: rotate(270deg);
+}
+
+.box .percent svg circle {
+  width: 150px;
+  height: 150px;
+  fill: none;
+  stroke-width: 10px;
+  stroke: rgb(231, 119, 14);
+  transform: translate( 5px, 5px);
+  stroke-dasharray: 440;
+  stroke-linecap: round;
+}
+
+.box .percent .messages svg circle  {
+  stroke-dashoffset: calc(440 * (1 - var(--percentage-messages) / 100) );
+}
+
+.box .percent .users svg circle  {
+  stroke-dashoffset: calc(440 * (1 - var(--percentage-users) / 100) );
+}
+
+.box .percent .number{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.box .percent .number h2 {
+  font-size: 48px;
+  font-weight: 300;
+}
+
+.box .percent .number h2 span{
+  font-size: 24px;
+  font-weight: 300;    
+}
+
+.box .text {
+  padding: 10px 0 0;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+
+
+/* Side Bar CSS */
+
+
 
 .sidebar{
     background-color:#4F506B;
+    flex-direction: column;
 }
 
-nav a.nav-link img {
+/* nav a.nav-link img {
   visibility: hidden;
-}
+} */
 
 input[type="text"], input[type="email"]  {
   background-color: #dfe4dc;
@@ -48,7 +132,7 @@ input[type="password"] {
   background-color: papayawhip;
 }
 
-@media (max-width:760px) {
+@media only screen and (max-width:760px) {
   nav a span{
       visibility: hidden;
   }
@@ -71,13 +155,13 @@ input[type="password"] {
   }
 }
 
-@media (max-width:480px) {
+@media only screen and (max-width:480px) {
   nav a span{
       visibility: hidden;
   }
   nav a img{
-    width: 16px;
-    height: 16px;
+    width: 36px;
+    height: 36px;
   }
   nav .nav-link{
     background-color: white;

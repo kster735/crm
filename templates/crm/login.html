@@ -5,18 +5,16 @@
 {% endblock title %}
 
 {% block header %}
-    <h1 class="display-1"> Login </h1>
+    <h1 class=""> Login </h1>
 {% endblock header %}
 
 {% block sidebar %}
-<div class="col-1 col-md-3 min-vh-100 sidebar">
+<div class="col-2 col-md-2 min-vh-100 sidebar">
     <nav class="nav flex-column text-truncate">
         <a class="nav-link link-light text-truncate fs-1 text-start mb-5" href="/crm">
-            <span> miniCRM </span><br>
-            {%load static%}
-            <img src="{% static 'crm/assets/images/home.svg' %}" alt="contacts"
-                width="64"
-                height="64">
+            {% load static %}
+            <img src="{% static 'crm/assets/images/logo.svg' %}" alt="contacts"> 
+            <span class="align-bottom"> miniCRM </span>
         </a>
     </nav>
 </div>
@@ -34,7 +32,7 @@
         <b>{{username}}</b>
     {% endif %}
     
-    <div class="container container-sm w-75  mt-5 rounded px-3">
+    <div class="container container-sm mt-5 rounded px-3">
         <h3 class="display-4 mb-5">Put in credentials </h3>
 
         <form class="row py-5 px-2 rounded-5" action="" method="post">
