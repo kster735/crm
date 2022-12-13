@@ -14,6 +14,9 @@ class User(models.Model):
     user_level_access = models.IntegerField(default=0)
     user_is_active = models.BooleanField(default=True)
 
+    def __str__(self):
+        return self.user_username
+
 class Contact(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     contact_firstname = models.CharField(max_length=255)
@@ -30,11 +33,19 @@ class Contact(models.Model):
 
 class Message(models.Model):
     contact = models.ForeignKey(Contact, on_delete=models.CASCADE, null=True)
-    message_id = models.IntegerField()
     message_title = models.CharField(max_length=255)
     message_content = models.CharField(max_length=255)
     message_datetime = models.DateTimeField()
     message_channel = models.CharField(max_length=255)
-    message_files = models.DateField()
-    message_due_date = models.CharField(max_length=255)
+    message_due_datetime = models.DateTimeField(max_length=255)
+    message_processed = models.BooleanField(default=False)
 
+    def __str__(self):
+        return self.message_title
+
+class MessageFile(models.Model):
+    message = models.ForeignKey(Message, on_delete=models.CASCADE, null=True)
+    message_file_name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.message_file_name

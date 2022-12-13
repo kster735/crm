@@ -5,6 +5,7 @@
 
 <p> Cookie age : {{cookieage}} </p>
 <p> Session duration : {{sessionduration}} </p>
+<p> Boolean Test: {{mybool}}</p>
 
 {% if user_id %}
     <p> This session is for user: {{user_id}} </p>
@@ -17,6 +18,9 @@
         <div class="form-floating mb-3 col-6">
             <input type="text" class="form-control" name="message" id="message" placeholder="Write your message">
             <label for="message" class="px-4">Write your message</label>
+        </div>
+        <div class="col-7">
+            <input type="checkbox" id="myCheck" name="myCheck" value="True">
         </div>
         <div class="my-3">
             <button type="submit" class="btn btn-lg btn-primary mb-3 px-5">Send</button>

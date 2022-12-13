@@ -1,42 +1,17 @@
-
-/* 
-@media (min-width: 992px) {
-    .navbar,
-    .navbar-collapse {
-      flex-direction: column;
-    }
-    .navbar-expand-lg .navbar-nav {
-      flex-direction: column;
-    }
-    .navbar {
-      width: 28%;
-      height: 100vh;
-      align-items: flex-start;
-    }
-    .navbar-brand {
-      margin-left: 0.5em;
-      padding-bottom: 0;
-      border-bottom: 4px solid #464646;
-    }
-    form input {
-      margin-bottom: 0.7em;
-    }
-  } */
-
-body{
-    position: relative;
+body {
+  position: relative;
 }
 
-footer{
-  position: fixed;
-  bottom: -50px;
+footer {
+  position: relative;
+  /* bottom: -50px; */
 }
 
 /* Circle Bars CSS */
 
 :root {
   --percentage-messages: 0;
-  --percentage-users:0;
+  --percentage-users: 0;
 }
 
 .box {
@@ -69,20 +44,20 @@ footer{
   fill: none;
   stroke-width: 10px;
   stroke: rgb(231, 119, 14);
-  transform: translate( 5px, 5px);
+  transform: translate(5px, 5px);
   stroke-dasharray: 440;
   stroke-linecap: round;
 }
 
-.box .percent .messages svg circle  {
-  stroke-dashoffset: calc(440 * (1 - var(--percentage-messages) / 100) );
+.box .percent .messages svg circle {
+  stroke-dashoffset: calc(440px * (1 - var(--percentage-messages) /100));
 }
 
-.box .percent .users svg circle  {
-  stroke-dashoffset: calc(440 * (1 - var(--percentage-users) / 100) );
+.box .percent .users svg circle {
+  stroke-dashoffset: calc(440px * (1 - var(--percentage-users) / 100));
 }
 
-.box .percent .number{
+.box .percent .number {
   position: absolute;
   top: 0;
   left: 0;
@@ -98,9 +73,9 @@ footer{
   font-weight: 300;
 }
 
-.box .percent .number h2 span{
+.box .percent .number h2 span {
   font-size: 24px;
-  font-weight: 300;    
+  font-weight: 300;
 }
 
 .box .text {
@@ -115,16 +90,20 @@ footer{
 
 
 
-.sidebar{
-    background-color:#4F506B;
-    flex-direction: column;
+.sidebar {
+  background-color: #4F506B;
+  flex-direction: column;
 }
 
-/* nav a.nav-link img {
-  visibility: hidden;
-} */
 
-input[type="text"], input[type="email"]  {
+input[type="text"],
+input[type="email"],
+input[type="datetime-local"],
+input[type="list"]{
+  background-color: #dfe4dc;
+}
+
+textarea {
   background-color: #dfe4dc;
 }
 
@@ -132,48 +111,62 @@ input[type="password"] {
   background-color: papayawhip;
 }
 
-@media only screen and (max-width:760px) {
-  nav a span{
-      visibility: hidden;
+@media only screen and (max-width: 1600px) {
+  .menu-item {
+    font-size: 2rem;
   }
-  nav a img{
-      width: 24px;
-      height: 24px;
+}
+
+
+@media only screen and (min-width: 992px) {
+  .menu-item {
+    font-size: 1rem;
   }
-  nav .nav-link{
-      visibility: hidden;
-      background-color: white;
+}
+
+
+@media only screen and (max-width: 992px) {
+  nav a span {
+    visibility: hidden;
   }
- 
+
+  nav .nav-link {
+    visibility: hidden;
+    background-color: white;
+  }
+
   nav a.nav-link img {
     visibility: visible;
   }
 
-  footer{
-      position: relative;
-      float: left;
+  footer {
+    position: relative;
+    float: left;
   }
 }
 
+
 @media only screen and (max-width:480px) {
-  nav a span{
-      visibility: hidden;
+  nav a span {
+    visibility: hidden;
   }
-  nav a img{
+
+  nav a img {
     width: 36px;
     height: 36px;
   }
-  nav .nav-link{
+
+  nav .nav-link {
     background-color: white;
     visibility: hidden;
   }
- 
+
   nav a.nav-link img {
     visibility: visible;
   }
 
-  footer{
-      position: relative;
-      float: left;
+  footer {
+    position: relative;
+    float: left;
   }
-}
+} 

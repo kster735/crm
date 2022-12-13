@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import User, Contact, Message
 from django.db import connection
+from django.contrib.auth.hashers import make_password, check_password, is_password_usable
 
 def index(request):
     if 'user_id' in request.session:
@@ -27,14 +28,16 @@ def login(request):
         cursor = connection.cursor()
         sql  = "SELECT * "
         sql += "FROM crm_user WHERE "
-        sql += "user_username=%s and user_password=%s"
-        cursor.execute(sql, [username, password])
+        sql += "user_username=%s"
+        cursor.execute(sql, [username])
         user = dictfetchall(cursor)
         if user:
-            request.session['user_id'] = user[0]['id']
-            request.session['user_username'] = user[0]['user_username']
-            request.session.set_expiry(1200)
-            return redirect('index')
+            hashed_password = user[0]['user_password']
+            if check_password(password, hashed_password):
+                request.session['user_id'] = user[0]['id']
+                request.session['user_username'] = user[0]['user_username']
+                request.session.set_expiry(1200)
+                return redirect('index')
         else:
             return render(request, 'crm/login.html', {'errormsg': 'Please enter valid Username or Password.', 'username': username})
     return render(request, 'crm/login.html')
@@ -45,6 +48,30 @@ def logout(request):
     except:
         return redirect('login')
     return redirect('login')
+
+def users(request, user_id):
+    if not isloggedin(request):
+        return redirect('login')
+    user_list = User.objects.all()
+    template ='crm/users.html'
+    context = {
+        'user_list': user_list,
+        'user_id': user_id,
+    }
+    return render(request, template, context)
+
+def users_insert_form(request, user_id):
+    if not isloggedin(request):
+        return redirect('login')
+
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM crm_user WHERE id=%s", str(user_id))
+    user = dictfetchall(cursor)
+    cursor.close()
+    return render(request, 'crm/users_insert_form.html', {'user': user[0], 'user_id': user_id})
+
+def user_store(request):
+    pass
 
 
 def contacts(request, user_id, viewuserid = None, error = None):
@@ -97,35 +124,51 @@ def contact_store(request, user_id, viewuserid):
         error = 'An error has occured'
         return redirect('contacts_insert_form', user_id = user_id, viewuserid = user_id, error=error)
 
-def users(request, user_id):
-    if not isloggedin(request):
-        return redirect('login')
-    user_list = User.objects.all()
-    template ='crm/users.html'
-    context = {
-        'user_list': user_list,
-        'user_id': user_id,
-    }
-    return render(request, template, context)
-
-def users_insert_form(request, user_id):
-    if not isloggedin(request):
-        return redirect('login')
-
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM crm_user WHERE id=%s", str(user_id))
-    user = dictfetchall(cursor)
-    cursor.close()
-    return render(request, 'crm/users_insert_form.html', {'user': user[0]})
-
-def user_store(request):
-    pass
 
 def messages(request, user_id):
     if not isloggedin(request):
         return redirect('login')
+    sql = "SELECT * FROM crm_message WHERE contact_id in (SELECT id FROM crm_contact WHERE user_id=%s)"
+    cursor = connection.cursor()
+    cursor.execute(sql, [str(user_id)])
+    messages_list = dictfetchall(cursor)
+    cursor.close()
+    return render(request, 'crm/messages.html', {'messages_list': messages_list,'user_id': user_id})
 
-    return render(request, 'crm/messages.html', {'user_id': user_id})
+def messages_insert_form(request, user_id, error=None):
+    if not isloggedin(request):
+        return redirect('login')
+    cursor = connection.cursor()
+    cursor.execute("SELECT id, contact_firstname, contact_lastname FROM crm_contact WHERE user_id=%s ORDER BY contact_lastname, contact_firstname", str(user_id))
+    contacts = dictfetchall(cursor)
+    cursor.close()
+    return render(request, 'crm/messages_insert_form.html', {'contacts': contacts, 'user_id': user_id, 'user_username': request.session['user_username'], 'errormessage': error})
+
+def message_store(request, user_id):
+    if not isloggedin(request):
+        return redirect('login')
+    contact_id = request.POST['messageContact']
+    message_title =  request.POST['messageTitle']
+    message_content = request.POST['messageContent']
+    message_datetime = request.POST['messageDateTime']
+    message_channel = request.POST['messageChannel']
+    message_due_date = request.POST['messageDueDateTime']
+    message_processed_str = request.POST.get('messageProcessed', 'False')
+    message_processed = True if message_processed_str == 'True' else False
+    sql = "INSERT INTO crm_message (`contact_id`,`message_title`,`message_content`,`message_datetime`,`message_channel`,`message_due_datetime`,`message_processed`)"
+    sql += " VALUES ( %s, %s, %s, %s, %s, %s, %s)"
+    try:
+        cursor = connection.cursor()
+        cursor.execute(sql, [str(contact_id), message_title, message_content, message_datetime, message_channel, message_due_date, message_processed])
+        cursor.close()
+        sql = "SELECT * FROM crm_message WHERE contact_id=%s"
+        cursor = connection.cursor()
+        cursor.execute(sql, [str(contact_id)])
+        messages_list = dictfetchall(cursor)
+        cursor.close()
+        return render(request, 'crm/messages.html', {'messages_list': messages_list, 'user_id': user_id, 'contact_id': contact_id})
+    except Exception as e:
+        return redirect('messages_insert_form', user_id = user_id, error=e)
 
 def dictfetchall(cursor):
     "Return all rows from a cursor as a dict"
@@ -135,17 +178,17 @@ def dictfetchall(cursor):
         for row in cursor.fetchall()
     ]
 
-
 def test(request):
-    
     sessionduration = request.session.get_expiry_age() 
     cookieage = request.session.get_session_cookie_age()
     # user_id = request.session['user_id']
     cookiecontext = {'cookieage': cookieage, 'sessionduration': sessionduration}
     message = {'message': 'ok'}
-    if request.method == "POST":
-        message = {'message': request.POST['message']}
-    context = message | cookiecontext
+    context = message | cookiecontext | {'mybool': 'False'}
+
+    myboolean = request.POST.get('myCheck', 'False')
+    message = {'message': request.POST['message']}    
+    context = message | cookiecontext | {'mybool': myboolean}
     return render(request, 'crm/test.html', context)
 
 def isloggedin(req) -> bool:
